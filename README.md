@@ -120,7 +120,7 @@ Descarga o clona el repositorio y abre `index.html` en cualquier navegador moder
 
 ### Opción 2: GitHub Pages
 
-Visita la demo en vivo: `https://YOUR_USERNAME.github.io/half-plate-plus/`
+Visita la demo en vivo: `https://crivera-upr.github.io/half-plate-plus/index.html`
 
 ---
 
