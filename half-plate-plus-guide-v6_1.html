@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>How to Play — Half-Plate PLUS (v6.1)</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --card: #0b1222;
+      --card2: #0e1630;
+      --border: #223055;
+      --border2: #1a2a50;
+      --text: #e5e9f5;
+      --muted: #9fb0db;
+      --dim: #6b7fa8;
+      --green: #10b981;
+      --rose: #ef4444;
+      --amber: #f59e0b;
+      --blue: #2563eb;
+      --purple: #a78bfa;
+      --cyan: #0ea5e9;
+      --teal: #14b8a6;
+      --pink: #ec4899;
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      background: linear-gradient(180deg, #00040c 0%, #08112a 40%, #0b2a6f 100%);
+      min-height: 100vh;
+      color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    a { color: #93c5fd; }
+
+    /* ── Panel ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.03) inset;
+      width: 100%;
+      max-width: 640px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 94vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header h1 span { font-size: 22px; }
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 14px;
+      transition: all .15s;
+    }
+    .back-link:hover { border-color: #4a6fa5; color: var(--text); }
+
+    /* ── Slide area ── */
+    .slide-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .slide {
+      display: none;
+      padding: 24px 28px 20px;
+      animation: fadeUp .3s ease;
+    }
+    .slide.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Slide content ── */
+    .tag {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .slide-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .slide-text {
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+    .slide-text strong { color: #c4d0eb; }
+
+    /* ── Visuals container ── */
+    .vis {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 14px;
+    }
+    .vis svg { display: block; }
+
+    /* ── Callout box ── */
+    .callout {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      background: #080f22;
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: #8fa3cc;
+      line-height: 1.5;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Legend grid ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 6px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      background: #080f22;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 7px 12px;
+    }
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      border: 2.5px solid;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1e3060;
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .dot.on {
+      background: var(--blue);
+      box-shadow: 0 0 10px rgba(37,99,235,.5);
+    }
+    .nav { display: flex; gap: 10px; }
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--card2);
+      color: #c4d0eb;
+      padding: 9px 18px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all .15s;
+      appearance: none;
+    }
+    .btn:hover { background: #162040; border-color: #3b6abf; }
+    .btn.primary { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+    .btn.primary:hover { background: #2563eb; }
+
+    /* ── Step counter ── */
+    .step-count {
+      font-size: 11px;
+      color: var(--dim);
+      font-weight: 600;
+      letter-spacing: .3px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .slide { padding: 18px 18px 16px; }
+      .slide-title { font-size: 17px; }
+      .header { padding: 16px 18px 12px; }
+      .footer { padding: 14px 18px 16px; }
+      .legend-item { font-size: 12px; padding: 5px 9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="header">
+      <h1><span>❓</span> How to Play <span style="font-weight:300;font-size:14px">(v6.1)</span></h1>
+      <a href="index.html" class="back-link">← Back to App</a>
+    </div>
+
+    <div class="slide-area" id="slideArea"></div>
+
+    <div class="footer">
+      <div class="dots" id="dots"></div>
+      <div class="nav">
+        <button class="btn" id="prevBtn">← Back</button>
+        <button class="btn primary" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ═══════════════════════════════════════════════════════════════
+  //  SLIDE DATA
+  // ═══════════════════════════════════════════════════════════════
+  const slides = [
+
+    // ── 0: THE GOAL ──
+    {
+      tag: "THE GOAL", tagBg: "#10b98122", tagColor: "#10b981", tagBorder: "#10b98144",
+      title: "Fill half your plate with fruits & vegetables",
+      text: `You start with a plate loaded with ultra-processed items. Your job: <strong>swap them out</strong> until at least <strong>4 of 8 slots</strong> are produce (fruits or vegetables). The green arc on the plate shows your target zone.`,
+      visual: buildPlateVis,
+      callout: { icon: "💡", text: "Starches/Viandas (plantain, cassava, sweet potato, etc.) do <strong>not</strong> count as produce — they belong in their own starch group. Only items from the Vegetables and Fruits categories count toward the half-plate goal." }
+    },
+
+    // ── 1: CONTROLS ──
+    {
+      tag: "CONTROLS", tagBg: "#2563eb22", tagColor: "#3b82f6", tagBorder: "#3b82f644",
+      title: "Add, swap, and remove foods",
+      text: `<strong>Click</strong> any food card in the Pantry to auto-place it in the first empty slot. Or <strong>drag</strong> a card onto a specific slot. To remove an item, click the <strong>✕</strong> button on the plate slot, or drag the slot to the trash bin.`,
+      visual: buildControlsVis,
+      callout: { icon: "🔒", text: "The plate has 8 fixed slots. If all slots are full, you must remove an item first — clicking a new food won't silently replace anything." }
+    },
+
+    // ── 2: VISUAL CUES ──
+    {
+      tag: "VISUAL CUES", tagBg: "#a855f722", tagColor: "#a855f7", tagBorder: "#a855f744",
+      title: "Slot borders tell you what's what",
+      text: `Each plate slot gets a <strong>color-coded border</strong> based on its food category, so you can read your plate composition at a glance without checking the HUD.`,
+      visual: null,
+      legend: [
+        { color: "#16a34a", label: "Vegetable" },
+        { color: "#22c55e", label: "Fruit" },
+        { color: "#a78bfa", label: "Starch/Vianda" },
+        { color: "#60a5fa", label: "Grain" },
+        { color: "#f59e0b", label: "Protein" },
+        { color: "#ef4444", label: "Ultra-processed (NOVA 4)" },
+      ],
+      callout: { icon: "⚠️", text: "Red borders flag ultra-processed items. The app catches these by <strong>both</strong> category and NOVA score — so items like hot dogs (salchichas) get flagged even though they're shelved under Protein." }
+    },
+
+    // ── 3: UNDERSTAND THE NUMBERS ──
+    {
+      tag: "METRICS", tagBg: "#f59e0b22", tagColor: "#f59e0b", tagBorder: "#f59e0b44",
+      title: "Understand the numbers",
+      text: `Every food you place updates <strong>six real-time metrics</strong> sourced from research databases: produce count, calories, budget, CO₂ emissions, water footprint, and ultra-processed count. The green progress bar fills as you add produce toward the half-plate goal.`,
+      visual: buildHudVis,
+      callout: { icon: "📊", text: "Calories from USDA, CO₂e from Poore & Nemecek (2018), Water from Water Footprint Network. Water Score = total footprint ÷ 100. Hover the HUD badges in the app for details." }
+    },
+
+    // ── 4: WASTE RISK ──
+    {
+      tag: "WASTE RISK", tagBg: "#ef444422", tagColor: "#f87171", tagBorder: "#ef444444",
+      title: "Reduce food waste, reduce methane",
+      text: `Every plate item has a <strong>spoil-risk level</strong> (high, medium, or low) shown as a badge on each slot. Hover any item for a <strong>storage tip</strong> to help it last longer.<br><br>The <strong>Waste Risk widget</strong> in the HUD tracks your plate's overall waste risk using a simple score: high-risk items add 2 points, medium add 1, low add 0. The widget turns <strong style="color:#4ade80">green</strong> (score 0–2), <strong style="color:#fbbf24">yellow</strong> (3–4), or <strong style="color:#f87171">red</strong> (5+).`,
+      visual: buildWasteVis,
+      callout: { icon: "🗑️", text: "When uneaten food ends up in landfills, it decomposes without oxygen and produces <strong>methane (CH₄)</strong> — a greenhouse gas roughly 80× more potent than CO₂ over 20 years. Globally, food waste reached ~1.05 billion tonnes in 2022 (UNEP, 2024). Choosing low-spoil items and storing food properly helps break this cycle." }
+    },
+
+    // ── 5: PANTRY TOOLS ──
+    {
+      tag: "PANTRY TOOLS", tagBg: "#14b8a622", tagColor: "#14b8a6", tagBorder: "#14b8a644",
+      title: "Filter, search, and go seasonal",
+      text: `Use the <strong>category pills</strong> at the top of the Pantry to show only vegetables, fruits, proteins, etc. The <strong>search bar</strong> filters by name. Toggle <strong>"In-Season Only"</strong> to see what's currently available in Puerto Rico's tropical calendar (dry season: Dec–Apr, wet: May–Nov).`,
+      visual: buildFilterVis,
+      callout: null
+    },
+
+    // ── 6: GAME MODES ──
+    {
+      tag: "GAME MODES", tagBg: "#ec489922", tagColor: "#ec4899", tagBorder: "#ec489944",
+      title: "Three ways to play",
+      text: `<strong>Sandbox</strong> — Free play with no rules. Experiment, learn, and explore at your own pace.<br><br><strong>Challenge</strong> — Pick a challenge pack (Budget Bite, Eco Swap, Balanced Basics, etc.) with specific goals. Complete all goals to win.<br><br><strong>Speedrun</strong> — 30 seconds on the clock. Pick a variant (Protein Blitz, Ultra Purge, etc.) and build a plate that meets all goals before time runs out.`,
+      visual: buildModesVis,
+      callout: { icon: "🏆", text: "Achievements like Rainbow (4+ produce colors), Thrifty (≤ $4), Lite (≤ 600 kcal), Eco (CO₂e ≤ 1.5 kg), and Minimal Waste (waste score 0) track across all modes and light up green when you hit the target." }
+    },
+  ];
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SVG VISUAL BUILDERS
+  // ═══════════════════════════════════════════════════════════════
+
+  function buildPlateVis() {
+    const w = 240, h = 240, cx = 120, cy = 120, rOuter = 100, rSlot = 72;
+    const items = [
+      { e: "🍔", c: "#ef4444" }, { e: "🍟", c: "#ef4444" }, { e: "🥤", c: "#ef4444" }, { e: "🍕", c: "#ef4444" },
+      { e: "🥦", c: "#16a34a" }, { e: "🍎", c: "#22c55e" }, { e: "🥬", c: "#16a34a" }, { e: "🍊", c: "#22c55e" },
+    ];
+    let s = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`;
+    // Plate rim
+    s += `<circle cx="${cx}" cy="${cy}" r="${rOuter}" fill="#0a1226" stroke="#172448" stroke-width="7"/>`;
+    // Green target arc (left half)
+    s += `<path d="M ${cx} ${cy - rOuter} A ${rOuter} ${rOuter} 0 0 0 ${cx} ${cy + rOuter}" fill="rgba(16,185,129,.15)" stroke="none"/>`;
+    // Dashed divider
+    s += `<line x1="${cx}" y1="${cy - rOuter + 7}" x2="${cx}" y2="${cy + rOuter - 7}" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4" opacity=".4"/>`;
+    // Label arcs
+    s += `<text x="${cx - 38}" y="${cy + 4}" text-anchor="middle" fill="#10b981" font-size="9" font-weight="700" opacity=".6">PRODUCE</text>`;
+    s += `<text x="${cx + 40}" y="${cy + 4}" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="700" opacity=".4">SWAP OUT</text>`;
+    // Slots
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
+      const x = cx + rSlot * Math.cos(a), y = cy + rSlot * Math.sin(a);
+      s += `<rect x="${x - 17}" y="${y - 17}" width="34" height="34" rx="8" fill="#0b1222" stroke="${items[i].c}" stroke-width="2.5"/>`;
+      s += `<text x="${x}" y="${y + 2}" text-anchor="middle" dominant-baseline="central" font-size="17">${items[i].e}</text>`;
+    }
+    // Center icon
+    s += `<text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="26" opacity=".25">🍽️</text>`;
+    s += `</svg>`;
+    return s;
+  }
+
+  function buildControlsVis() {
+    return `<svg viewBox="0 0 340 90" width="340" height="90" xmlns="http://www.w3.org/2000/svg">
+      <!-- Pantry card -->
+      <rect x="2" y="12" width="88" height="66" rx="14" fill="#0b1222" stroke="#223055" stroke-width="1.5"/>
+      <text x="46" y="39" text-anchor="middle" font-size="24">🥦</text>
+      <text x="46" y="58" text-anchor="middle" fill="#9fb0db" font-size="9.5" font-weight="700">Broccoli</text>
+      <text x="46" y="70" text-anchor="middle" fill="#6b7fa8" font-size="7.5">$0.55 · 31 kcal</text>
+
+      <!-- Arrow -->
+      <line x1="106" y1="45" x2="152" y2="45" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,3"/>
+      <polygon points="152,40 163,45 152,50" fill="#3b82f6"/>
+      <text x="134" y="36" text-anchor="middle" fill="#6b7fa8" font-size="9" font-weight="600">click</text>
+
+      <!-- Plate slot -->
+      <rect x="175" y="15" width="60" height="60" rx="14" fill="#0b1222" stroke="#16a34a" stroke-width="2.5"/>
+      <text x="205" y="48" text-anchor="middle" font-size="26">🥦</text>
+      <text x="205" y="62" text-anchor="middle" fill="#d0d8ef" font-size="7.5" font-weight="700">Broccoli</text>
+      <!-- X button -->
+      <circle cx="226" cy="22" r="9" fill="#0a1226" stroke="#223055" stroke-width="1.5"/>
+      <text x="226" y="25.5" text-anchor="middle" fill="#e5e9f5" font-size="10" font-weight="900">✕</text>
+      <text x="205" y="86" text-anchor="middle" fill="#6b7fa8" font-size="8.5">plate slot</text>
+
+      <!-- Arrow to trash -->
+      <line x1="248" y1="45" x2="274" y2="45" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" opacity=".6"/>
+      <polygon points="274,41 282,45 274,49" fill="#ef4444" opacity=".6"/>
+
+      <!-- Trash -->
+      <rect x="288" y="22" width="48" height="38" rx="10" fill="none" stroke="#2b3d6a" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="312" y="46" text-anchor="middle" font-size="18">🗑️</text>
+      <text x="312" y="74" text-anchor="middle" fill="#6b7fa8" font-size="8.5">drag here</text>
+    </svg>`;
+  }
+
+  function buildHudVis() {
+    const items = [
+      { emoji: "🥬", label: "Produce", val: "4 / 4", color: "#10b981" },
+      { emoji: "🔥", label: "Calories", val: "520 kcal", color: "#f59e0b" },
+      { emoji: "💵", label: "Budget", val: "$3.40", color: "#22c55e" },
+      { emoji: "🏭", label: "CO₂e", val: "0.82 kg", color: "#60a5fa" },
+      { emoji: "💧", label: "Water", val: "4.2", color: "#38bdf8" },
+    ];
+    const gap = 66, w = items.length * gap, h = 70;
+    let s = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`;
+    items.forEach((m, i) => {
+      const x = i * gap;
+      s += `<rect x="${x}" y="0" width="62" height="56" rx="12" fill="#0b1222" stroke="#1e3060" stroke-width="1.5"/>`;
+      s += `<text x="${x + 31}" y="19" text-anchor="middle" font-size="15">${m.emoji}</text>`;
+      s += `<text x="${x + 31}" y="36" text-anchor="middle" fill="${m.color}" font-size="11" font-weight="800">${m.val}</text>`;
+      s += `<text x="${x + 31}" y="49" text-anchor="middle" fill="#6b7fa8" font-size="8">${m.label}</text>`;
+    });
+    // Progress bar underneath
+    s += `<rect x="0" y="62" width="${w}" height="7" rx="3.5" fill="#1e3060"/>`;
+    s += `<rect x="0" y="62" width="${w * 0.85}" height="7" rx="3.5" fill="url(#barGrad)"/>`;
+    s += `<defs><linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>`;
+    s += `</svg>`;
+    return s;
+  }
+
+  function buildModesVis() {
+    return `<svg viewBox="0 0 310 48" width="310" height="48" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="4" width="90" height="38" rx="10" fill="#2563eb" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="45" y="28" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="700">Sandbox</text>
+
+      <rect x="102" y="4" width="90" height="38" rx="10" fill="#0e162c" stroke="#223055" stroke-width="1.5"/>
+      <text x="147" y="28" text-anchor="middle" fill="#c4d0eb" font-size="12.5" font-weight="700">Challenge</text>
+
+      <rect x="204" y="4" width="90" height="38" rx="10" fill="#0e162c" stroke="#223055" stroke-width="1.5"/>
+      <text x="249" y="28" text-anchor="middle" fill="#c4d0eb" font-size="12.5" font-weight="700">Speedrun</text>
+    </svg>`;
+  }
+
+  function buildWasteVis() {
+    return `<svg viewBox="0 0 320 120" width="320" height="120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Three example slots with spoil badges -->
+      <rect x="10" y="4" width="60" height="60" rx="14" fill="#0b1222" stroke="#22c55e" stroke-width="2"/>
+      <text x="40" y="38" text-anchor="middle" font-size="24">🍓</text>
+      <rect x="16" y="56" width="48" height="16" rx="5" fill="#7f1d1d" stroke="#991b1b" stroke-width="1"/>
+      <text x="40" y="67" text-anchor="middle" fill="#fca5a5" font-size="7.5" font-weight="800">⚠️ Spoils fast</text>
+
+      <rect x="84" y="4" width="60" height="60" rx="14" fill="#0b1222" stroke="#f59e0b" stroke-width="2"/>
+      <text x="114" y="38" text-anchor="middle" font-size="24">🍗</text>
+      <rect x="90" y="56" width="48" height="16" rx="5" fill="#78350f" stroke="#92400e" stroke-width="1"/>
+      <text x="114" y="67" text-anchor="middle" fill="#fed7aa" font-size="7.5" font-weight="800">⏳ Use soon</text>
+
+      <rect x="158" y="4" width="60" height="60" rx="14" fill="#0b1222" stroke="#16a34a" stroke-width="2"/>
+      <text x="188" y="38" text-anchor="middle" font-size="24">🥕</text>
+      <rect x="164" y="56" width="48" height="16" rx="5" fill="#14532d" stroke="#166534" stroke-width="1"/>
+      <text x="188" y="67" text-anchor="middle" fill="#bbf7d0" font-size="7.5" font-weight="800">✓ Keeps well</text>
+
+      <!-- Tooltip example -->
+      <rect x="228" y="0" width="88" height="44" rx="10" fill="#0f1d3a" stroke="#223055" stroke-width="1"/>
+      <text x="272" y="14" text-anchor="middle" fill="#c4d0eb" font-size="7">💡 Refrigerate dry</text>
+      <text x="272" y="24" text-anchor="middle" fill="#c4d0eb" font-size="7">in a bag. Use</text>
+      <text x="272" y="34" text-anchor="middle" fill="#c4d0eb" font-size="7">within 4–5 days.</text>
+      <polygon points="262,44 272,52 282,44" fill="#223055"/>
+      <text x="272" y="64" text-anchor="middle" fill="#6b7fa8" font-size="7.5">↑ hover for tip</text>
+
+      <!-- Score bar -->
+      <rect x="10" y="88" width="80" height="24" rx="10" fill="#0a1a12" stroke="#14532d" stroke-width="1.5"/>
+      <text x="50" y="104" text-anchor="middle" fill="#4ade80" font-size="8.5" font-weight="700">🟢 Score 0–2</text>
+
+      <rect x="100" y="88" width="80" height="24" rx="10" fill="#1a1506" stroke="#78350f" stroke-width="1.5"/>
+      <text x="140" y="104" text-anchor="middle" fill="#fbbf24" font-size="8.5" font-weight="700">🟡 Score 3–4</text>
+
+      <rect x="190" y="88" width="80" height="24" rx="10" fill="#1a0e0e" stroke="#3b1a1a" stroke-width="1.5"/>
+      <text x="230" y="104" text-anchor="middle" fill="#f87171" font-size="8.5" font-weight="700">🔴 Score 5+</text>
+    </svg>`;
+  }
+
+  function buildFilterVis() {
+    return `<svg viewBox="0 0 340 42" width="340" height="42" xmlns="http://www.w3.org/2000/svg">
+      <!-- Active pill -->
+      <rect x="0" y="4" width="42" height="32" rx="16" fill="#0ea5e9" stroke="#0ea5e9" stroke-width="1.5"/>
+      <text x="21" y="24" text-anchor="middle" fill="#03122b" font-size="10.5" font-weight="700">All</text>
+
+      <rect x="50" y="4" width="60" height="32" rx="16" fill="#0a1226" stroke="#223055" stroke-width="1.5"/>
+      <text x="80" y="24" text-anchor="middle" fill="#e5e9f5" font-size="10">🥦 Veg</text>
+
+      <rect x="118" y="4" width="60" height="32" rx="16" fill="#0a1226" stroke="#223055" stroke-width="1.5"/>
+      <text x="148" y="24" text-anchor="middle" fill="#e5e9f5" font-size="10">🍎 Fruit</text>
+
+      <text x="194" y="24" fill="#4a6090" font-size="14" font-weight="700">···</text>
+
+      <rect x="214" y="4" width="120" height="32" rx="16" fill="#0a1226" stroke="#223055" stroke-width="1.5"/>
+      <text x="274" y="24" text-anchor="middle" fill="#e5e9f5" font-size="10">🌴 All Seasons</text>
+    </svg>`;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  RENDER
+  // ═══════════════════════════════════════════════════════════════
+  const area = document.getElementById("slideArea");
+  const dotsEl = document.getElementById("dots");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  slides.forEach((s, i) => {
+    // Build slide HTML
+    const div = document.createElement("div");
+    div.className = "slide" + (i === 0 ? " active" : "");
+
+    let html = `<div class="step-count">STEP ${i + 1} OF ${slides.length}</div>`;
+    html += `<div class="tag" style="background:${s.tagBg};color:${s.tagColor};border:1px solid ${s.tagBorder}">${s.tag}</div>`;
+    html += `<div class="slide-title">${s.title}</div>`;
+    html += `<p class="slide-text">${s.text}</p>`;
+
+    if (s.visual) {
+      html += `<div class="vis">${s.visual()}</div>`;
+    }
+
+    if (s.legend) {
+      html += `<div class="legend">`;
+      s.legend.forEach(l => {
+        html += `<div class="legend-item"><div class="swatch" style="border-color:${l.color};background:${l.color}18"></div>${l.label}</div>`;
+      });
+      html += `</div>`;
+    }
+
+    if (s.callout) {
+      html += `<div class="callout"><div class="callout-icon">${s.callout.icon}</div><div>${s.callout.text}</div></div>`;
+    }
+
+    div.innerHTML = html;
+    area.appendChild(div);
+
+    // Dot
+    const dot = document.createElement("div");
+    dot.className = "dot" + (i === 0 ? " on" : "");
+    dot.addEventListener("click", () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  NAVIGATION
+  // ═══════════════════════════════════════════════════════════════
+  let cur = 0;
+
+  function goTo(idx) {
+    cur = Math.max(0, Math.min(slides.length - 1, idx));
+    area.querySelectorAll(".slide").forEach((sl, i) => sl.classList.toggle("active", i === cur));
+    dotsEl.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("on", i === cur));
+    prevBtn.style.visibility = cur === 0 ? "hidden" : "visible";
+    nextBtn.textContent = cur === slides.length - 1 ? "Done ✓" : "Next →";
+  }
+
+  prevBtn.addEventListener("click", () => goTo(cur - 1));
+  nextBtn.addEventListener("click", () => {
+    if (cur === slides.length - 1) {
+      // Close = go back to app (or just close the tab)
+      window.close();
+      // Fallback if window.close is blocked:
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#9fb0db;font:18px/1.5 system-ui;text-align:center;padding:20px"><div><div style="font-size:48px;margin-bottom:16px">✅</div><strong>You\'re all set!</strong><br>Close this tab and head back to the app.<br><br><a href="index.html" style="color:#93c5fd">← Open Half-Plate PLUS</a></div></div>';
+      return;
+    }
+    goTo(cur + 1);
+  });
+
+  // Keyboard nav
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); nextBtn.click(); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); prevBtn.click(); }
+    if (e.key === "Escape") window.close();
+  });
+
+  // Init
+  goTo(0);
+})();
+</script>
+</body>
+</html>
