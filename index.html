@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Half-Plate PLUS (v6.2)</title>
+  <style>
+    :root{
+      --ink:#0f172a; --muted:#94a3b8; --ring:#1f2a44; --card:#0b1222; --card2:#0e1630;
+      --green:#10b981; --rose:#ef4444; --amber:#f59e0b; --blue:#2563eb; --shadow:0 10px 24px rgba(0,0,0,.35);
+      --border:#223055;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#00040c 0%, #08112a 40%, #0b2a6f 100%);
+      color:#e5e9f5;
+      font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial
+    }
+    a{color:#93c5fd}
+    h1{margin:14px 0 6px 0}
+    .wrap{max-width:1220px;margin:auto;padding:16px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:1100px){.grid{grid-template-columns:1.1fr 1fr .9fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+    .card h2{margin:0;padding:14px 16px 0 16px;font-size:20px}
+    .card .sub{padding:0 16px 10px 16px;font-size:13px;color:#9fb0db}
+    .card .content{padding:12px 16px 16px 16px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .tabs{display:flex;gap:6px;flex-wrap:wrap}
+    .tab{padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#0e162c;cursor:pointer;font-weight:700;color:#e5e9f5}
+    .tab.active{background:#2563eb;border-color:#2563eb;color:#fff}
+    button{appearance:none;border-radius:12px;border:1px solid var(--border);background:#0e162c;
+      padding:8px 12px;cursor:pointer;font-weight:700;color:#e5e9f5}
+    button.primary{background:#1e293b;color:#fff;border-color:#1e293b}
+    button.ghost{background:transparent}
+    input[type='text']{width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);background:#0a1226;color:#e5e9f5}
+    .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#0a1226;font-size:13px;color:#e5e9f5}
+    .pill.on{background:#0ea5e9;color:#03122b;border-color:#0ea5e9}
+    select.select{padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#0a1226;color:#e5e9f5}
+    .pantry{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:360px;overflow:auto}
+    @media(min-width:700px){.pantry{grid-template-columns:repeat(3,1fr)}}
+    .item{border:1px solid var(--border);border-radius:16px;background:#0b1222;padding:10px;text-align:left; position:relative}
+    .item:hover{box-shadow:0 0 0 1px #365da8} .item.locked{opacity:.35;filter:grayscale(1);cursor:not-allowed}
+    .item .em{font-size:28px; position:relative; display:inline-flex; align-items:center; gap:6px}
+    .dot{width:10px;height:10px;border-radius:999px;border:1px solid rgba(255,255,255,.25);display:inline-block}
+    .item .nm{font-weight:800;margin-top:4px}
+    .item .ct{font-size:12px;color:#a3b2d6}
+    .center{display:flex;justify-content:center}
+    .plate-wrap{position:relative;width:360px;height:360px;border-radius:50%;border:10px solid #172448;background:#0a1226;box-shadow:inset 0 0 60px rgba(0,0,0,.5)}
+    .half{position:absolute;inset:0;border-radius:50%;background:conic-gradient(rgba(16,185,129,.18) 0 180deg, transparent 180deg 360deg);pointer-events:none}
+    .slot{position:absolute;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:16px;background:rgba(8,17,42,.7);backdrop-filter:blur(2px);
+      border:1px solid #1f2a44;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px}
+    .slot.fill{border-width:2px}
+    .slot .label{font-size:10px;color:#d0d8ef;margin-top:2px;max-width:86px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .small{font-size:10px;color:#9fb0db}
+    .xbtn{position:absolute;top:-8px;right:-8px;border-radius:999px;border:1px solid var(--border);background:#0a1226;color:#e5e9f5;padding:4px;cursor:pointer}
+    .trash{margin-top:8px;display:flex;justify-content:center}
+    .trash .can{width:140px;height:70px;border:2px dashed #2b3d6a;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#92a2cf;background:#0a1226}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#0b1222;font-size:12px}
+    .badge[title]{cursor:help}
+    .bar{height:10px;background:#223055;border-radius:999px;overflow:hidden}
+    .bar>span{display:block;height:100%;background:linear-gradient(90deg,#10b981,#34d399)}
+    .kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+    .box{background:#0b1222;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+    .muted{color:#9fb0db;font-size:12px}
+    .goal{display:flex;align-items:flex-start;gap:8px;padding:8px;border:1px solid var(--border);border-radius:12px;background:#0b1222}
+    .goal.done{border-color:#10b981;box-shadow:0 0 0 2px rgba(16,185,129,.15) inset}
+    .goal .check{font-weight:900;width:20px;text-align:center}
+    .ach{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .ach .a{border:1px dashed #2b3d6a;border-radius:10px;padding:6px 8px;font-size:12px}
+    .ach .a.on{border-style:solid;border-color:#22c55e;background:#103222}
+    .timer{font-variant-numeric:tabular-nums;font-weight:800}
+    .note{font-size:13px;color:#9fb0db}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+    /* Waste layer */
+    .waste-widget{background:#0a1a12;border:1px solid #14532d;border-radius:14px;padding:12px 14px;margin-top:10px}
+    .waste-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .waste-header .waste-icon{font-size:18px}
+    .waste-header .waste-title{font-weight:800;font-size:13px;color:#4ade80}
+    .waste-count{display:flex;gap:6px;flex-wrap:wrap}
+    .waste-pip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700}
+    .waste-pip.high{background:#450a0a;color:#fca5a5;border:1px solid #7f1d1d}
+    .waste-pip.medium{background:#451a03;color:#fed7aa;border:1px solid #78350f}
+    .waste-pip.low{background:#052e16;color:#bbf7d0;border:1px solid #14532d}
+    .waste-widget.caution{background:#1a1506;border-color:#78350f}
+    .waste-widget.caution .waste-title{color:#fbbf24}
+    .waste-widget.danger{background:#1a0e0e;border-color:#3b1a1a}
+    .waste-widget.danger .waste-title{color:#f87171}
+    /* Spoil badge on plate slots */
+    .spoil-badge{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;padding:1px 6px;border-radius:6px;white-space:nowrap;pointer-events:none;z-index:2}
+    .spoil-badge.high{background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b}
+    .spoil-badge.medium{background:#78350f;color:#fed7aa;border:1px solid #92400e}
+    .spoil-badge.low{background:#14532d;color:#bbf7d0;border:1px solid #166534}
+    /* Storage tip tooltip */
+    .tip-trigger{cursor:help}
+    .tip-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0f1d3a;border:1px solid #223055;border-radius:10px;padding:8px 11px;font-size:11px;color:#c4d0eb;line-height:1.4;width:180px;text-align:center;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+    .tip-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#223055}
+    .slot:hover .tip-bubble,.slot:focus-within .tip-bubble{opacity:1}
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal.on{display:flex}
+    .mcard{background:#0b1222;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:20px;max-width:480px;width:92%;max-height:80vh;overflow:auto}
+    .mcard h3{margin:0 0 10px 0}
+    .mcard p{margin:0 0 16px 0;color:#9fb0db}
+    .src-list{font-size:12px;color:#9fb0db;margin:0;padding:0;list-style:none}
+    .src-list li{margin-bottom:8px}
+    .src-list li strong{color:#e5e9f5}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Half-Plate PLUS <span style="font-weight:300">(v6.2)</span></h1>
+    <p class="muted" style="margin-top:-6px">For educational purposes only. This app does not provide medical or nutrition advice. <button id="aboutBtn" class="ghost" style="padding:2px 8px;font-size:12px;font-weight:400">ℹ️ About the data</button> <button id="authorBtn" class="ghost" style="padding:2px 8px;font-size:12px;font-weight:400">👤 About the author</button></p>
+
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-mode="sandbox">Sandbox</button>
+        <button class="tab" data-mode="challenge">Challenge</button>
+        <button class="tab" data-mode="speedrun">Speedrun</button>
+      </div>
+      <select id="challengePack" class="select" style="display:none"></select>
+      <select id="speedVariant" class="select" style="display:none">
+        <option value="protein-blitz">Protein Blitz</option>
+        <option value="budget">Budget Sprint</option>
+        <option value="purge-ultra">Ultra Purge</option>
+        <option value="hydro-light">Hydro Light</option>
+        <option value="eco-saver">Eco Saver</option>
+      </select>
+      <button id="helpBtn" class="pill" style="margin-left:auto" onclick="window.open('half-plate-plus-guide-v6_2.html','_blank')">❓ How to Play</button>
+      <span class="muted" id="status"></span>
+    </div>
+
+    <div class="grid">
+      <!-- Pantry -->
+      <div class="card">
+        <h2>Pantry</h2>
+        <div class="sub">Filter, drag items to the plate, or click to auto-place.</div>
+        <div class="content">
+          <div class="row" id="filters"></div>
+          <div class="row">
+            <input id="search" type="text" placeholder="Search food…" />
+            <button id="season" class="pill">🌴 All Seasons</button>
+          </div>
+          <div class="pantry" id="pantry"></div>
+        </div>
+      </div>
+
+      <!-- Plate -->
+      <div class="card center">
+        <div class="content">
+          <h2 style="text-align:center;margin-bottom:4px">Your Plate</h2>
+          <div class="sub" style="text-align:center">Aim: half the plate with fruits and/or vegetables.</div>
+          <div style="display:flex;justify-content:center;margin-top:8px">
+            <div class="plate-wrap" id="plate">
+              <div class="half" aria-hidden="true"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+                <div style="text-align:center">
+                  <div style="font-size:48px">🍽️</div>
+                  <div class="muted">Place foods around</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="trash">
+            <div class="can" id="trash">🗑️ Drag here to remove</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUD -->
+      <div class="card">
+        <h2>HUD & Goals</h2>
+        <div class="content">
+          <div class="row">
+            <div class="badge"><strong>Produce (F+V):</strong> <span id="vegCount">0 / 4</span></div>
+            <div class="badge"><strong>Calories:</strong> <span id="cal">0 kcal</span></div>
+            <div class="badge"><strong>Budget:</strong> <span id="budget">$0.00</span></div>
+            <div class="badge" title="CO₂ equivalents per serving, from Poore &amp; Nemecek (2018)"><strong>CO₂e:</strong> <span id="co2">0.00 kg</span></div>
+            <div class="badge" title="Water Score = total water footprint ÷ 100. Score of 1.0 ≈ 100 L (mostly rainwater). Source: Water Footprint Network."><strong>💧 Water Score:</strong> <span id="water">0.0</span></div>
+            <div class="badge" title="NOVA 4 ultra-processed items on plate"><strong>🥤 Ultra:</strong> <span id="k-ultra">0</span></div>
+          </div>
+          <div style="margin:10px 0" class="bar"><span id="barfill" style="width:0%"></span></div>
+
+          <div id="goals" style="display:none; margin-top:6px"></div>
+
+          <div id="speed" class="note" style="display:none;margin-top:6px">
+            ⏱️ Time left: <span class="timer" id="timer">30</span>s — Complete the selected speedrun variant!
+          </div>
+
+          <div class="ach" id="ach">
+            <div class="a" data-key="rainbow">🌈 Rainbow (≥4 produce colors)</div>
+            <div class="a" data-key="thrifty">💸 Thrifty (≤ $4)</div>
+            <div class="a" data-key="lite">🔥 Lite (≤ 600 kcal)</div>
+            <div class="a" data-key="eco">🌍 Eco (CO₂e ≤ 1.5 kg)</div>
+            <div class="a" data-key="hydr">💧 Low Water (Score ≤ 12)</div>
+            <div class="a" data-key="lowwaste">♻️ Minimal Waste (waste score 0)</div>
+          </div>
+
+          <!-- Waste Awareness Widget -->
+          <div class="waste-widget" id="wasteWidget">
+            <div class="waste-header">
+              <span class="waste-icon">🗑️</span>
+              <span class="waste-title">Waste Risk</span>
+            </div>
+            <div class="waste-count" id="wastePips"></div>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <button id="reset">Reset Plate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal (reused for speedrun + about) -->
+  <div class="modal" id="modal">
+    <div class="mcard" role="dialog" aria-labelledby="mtitle" aria-modal="true">
+      <h3 id="mtitle">Time's up!</h3>
+      <div id="mbody"><p>Try the speedrun again, or switch variants.</p></div>
+      <div class="row">
+        <button id="modalClose">Close</button>
+        <button id="modalRetry" class="primary">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ═══════════════════════════════════════════════════════════════
+  //  CATEGORIES
+  // ═══════════════════════════════════════════════════════════════
+  const CATEGORIES = {
+    vegetable: { label: "Vegetables",          emoji: "🥦" },
+    fruit:     { label: "Fruits",              emoji: "🍎" },
+    starch:    { label: "Starches/Viandas",  emoji: "🍠" },
+    grain:     { label: "Grains",              emoji: "🍚" },
+    protein:   { label: "Protein",             emoji: "🍗" },
+    dairy:     { label: "Dairy",               emoji: "🧀" },
+    ultra:     { label: "Ultra-processed",     emoji: "🥤" },
+  };
+
+  const SLOT_COUNT = 8;
+  const PRODUCE_TARGET = Math.ceil(SLOT_COUNT / 2); // 4
+  const COLOR_HEX = {green:"#22c55e", red:"#ef4444", orange:"#f59e0b", yellow:"#eab308", purple:"#a855f7", white:"#e5e7eb", blue:"#3b82f6"};
+
+  // Helper: is this item counted as produce for the half-plate goal?
+  function isProduce(item) { return item && (item.category === "vegetable" || item.category === "fruit"); }
+  // Helper: is this item NOVA 4 ultra-processed?
+  function isUltra(item) { return item && (item.category === "ultra" || item.nova === 4); }
+  // Helper: Water Score = liters / 100
+  function waterScore(liters) { return (liters / 100); }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  PANTRY DATA (v6.2 — PR-centered, research-sourced, EN-first names)
+  // ═══════════════════════════════════════════════════════════════
+  const PANTRY=[{id:"st-platano-verde",name:"Green plantain (plátano verde)",category:"starch",emoji:"🍌",color:"green",servingG:150,kcal:180,cost:.5,co2:.08,water:129,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Store at room temp; refrigerate only when ripe.",tags:["staple","vianda"]},{id:"st-platano-maduro",name:"Ripe plantain (plátano maduro)",category:"starch",emoji:"🍌",color:"yellow",servingG:150,kcal:215,cost:.55,co2:.08,water:129,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Very ripe = use within 1–2 days or freeze peeled.",tags:["staple","vianda"]},{id:"st-yuca",name:"Cassava (yuca)",category:"starch",emoji:"🥔",color:"white",servingG:130,kcal:210,cost:.55,co2:.05,water:42,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Peel, cut, and freeze within 2 days of purchase.",tags:["staple","vianda"]},{id:"st-batata",name:"White sweet potato (batata)",category:"starch",emoji:"🍠",color:"white",servingG:130,kcal:115,cost:.5,co2:.04,water:42,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Store in cool, dark place. Don't refrigerate raw.",tags:["staple","vianda"]},{id:"st-name",name:"Yam (ñame)",category:"starch",emoji:"🥔",color:"white",servingG:130,kcal:155,cost:.55,co2:.04,water:42,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Keep whole in cool, dark spot for 1–2 weeks.",tags:["staple","vianda"]},{id:"st-tostones",name:"Fried green plantain (tostones)",category:"starch",emoji:"🍌",color:null,servingG:120,kcal:230,cost:.55,co2:.1,water:103,nova:2,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Best fresh. Smash and freeze raw for quick frying later.",tags:["local","staple"]},{id:"st-mofongo",name:"Mashed plantain (mofongo)",category:"starch",emoji:"🍌",color:null,servingG:200,kcal:350,cost:1.2,co2:.2,water:172,nova:2,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Eat fresh. Leftovers → refrigerate, reheat within 1 day.",tags:["local"]},{id:"veg-calabaza",name:"Tropical pumpkin (calabaza)",category:"vegetable",emoji:"🎃",color:"orange",servingG:130,kcal:35,cost:.45,co2:.04,water:42,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Whole keeps weeks in cool, dry spot. Cut → refrigerate, use in 4 days.",tags:["staple"]},{id:"veg-aji-dulce",name:"Sweet pepper (ají dulce)",category:"vegetable",emoji:"🌶️",color:"red",servingG:30,kcal:8,cost:.35,co2:.02,water:10,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Freeze whole in bags for sofrito anytime.",tags:["sofrito","local"]},{id:"veg-recao",name:"Culantro (recao)",category:"vegetable",emoji:"🌿",color:"green",servingG:10,kcal:3,cost:.25,co2:.01,water:3,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Wrap in damp paper towel, bag, refrigerate. Or blend into sofrito and freeze.",tags:["sofrito","herb","local"]},{id:"veg-chayote",name:"Chayote",category:"vegetable",emoji:"🥒",color:"green",servingG:130,kcal:25,cost:.4,co2:.03,water:42,nova:1,local:true,seasonal:["wet"],spoilRisk:"medium",storageTip:"Refrigerate unwrapped; lasts 2–3 weeks.",tags:["local"]},{id:"veg-tomato",name:"Tomato (tomate)",category:"vegetable",emoji:"🍅",color:"red",servingG:150,kcal:27,cost:.45,co2:.32,water:32,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Store on counter until ripe, then refrigerate. Use within 5 days.",tags:[]},{id:"veg-pepper-red",name:"Red bell pepper (pimiento rojo)",category:"vegetable",emoji:"🫑",color:"red",servingG:120,kcal:37,cost:.6,co2:.06,water:38,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Refrigerate whole. Cut peppers spoil fast — use within 2 days.",tags:[]},{id:"veg-onion",name:"Onion (cebolla)",category:"vegetable",emoji:"🧅",color:"white",servingG:110,kcal:44,cost:.25,co2:.03,water:35,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Store whole in cool, dry place for weeks. Cut → refrigerate, use in 7 days.",tags:["sofrito","pantry-stable"]},{id:"veg-garlic",name:"Garlic (ajo)",category:"vegetable",emoji:"🧄",color:"white",servingG:10,kcal:15,cost:.15,co2:.01,water:3,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Whole heads keep for months in cool, dry place.",tags:["sofrito","pantry-stable"]},{id:"veg-broccoli",name:"Broccoli (brócoli)",category:"vegetable",emoji:"🥦",color:"green",servingG:90,kcal:31,cost:.55,co2:.04,water:29,nova:1,local:false,seasonal:["dry"],spoilRisk:"high",storageTip:"Refrigerate dry in a bag. Use within 4–5 days.",tags:[]},{id:"veg-spinach",name:"Spinach (espinaca)",category:"vegetable",emoji:"🥬",color:"green",servingG:85,kcal:20,cost:.5,co2:.04,water:27,nova:1,local:false,seasonal:["dry"],spoilRisk:"high",storageTip:"Refrigerate in paper towel–lined container. Use within 3–4 days.",tags:[]},{id:"veg-lettuce",name:"Lettuce (lechuga)",category:"vegetable",emoji:"🥬",color:"green",servingG:80,kcal:12,cost:.35,co2:.04,water:10,nova:1,local:false,seasonal:["dry"],spoilRisk:"high",storageTip:"Wrap in damp paper towel, refrigerate. Wilts fast in PR heat.",tags:[]},{id:"veg-carrot",name:"Carrots (zanahorias)",category:"vegetable",emoji:"🥕",color:"orange",servingG:120,kcal:49,cost:.35,co2:.04,water:38,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Refrigerate in bag. Lasts 2–3 weeks.",tags:["pantry-stable"]},{id:"veg-corn",name:"Corn (maíz)",category:"vegetable",emoji:"🌽",color:"yellow",servingG:150,kcal:130,cost:.45,co2:.15,water:135,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Eat fresh ears within 2 days. Frozen kernels keep for months.",tags:[]},{id:"veg-cucumber",name:"Cucumber (pepino)",category:"vegetable",emoji:"🥒",color:"green",servingG:120,kcal:18,cost:.35,co2:.04,water:29,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Refrigerate whole. Cut → use in 2 days.",tags:[]},{id:"veg-avocado",name:"Avocado (aguacate)",category:"vegetable",emoji:"🥑",color:"green",servingG:70,kcal:114,cost:.75,co2:.18,water:140,nova:1,local:true,seasonal:["wet"],spoilRisk:"high",storageTip:"Ripe when slightly soft. Ripen on counter, then refrigerate for 2 days max.",tags:["local"]},{id:"veg-sweetpotato",name:"Sweet potato (camote)",category:"vegetable",emoji:"🍠",color:"orange",servingG:130,kcal:115,cost:.45,co2:.05,water:42,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Don't refrigerate raw. Cool, dark place for 2+ weeks.",tags:["pantry-stable"]},{id:"fr-guineo",name:"Banana (guineo)",category:"fruit",emoji:"🍌",color:"yellow",servingG:120,kcal:105,cost:.25,co2:.11,water:103,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Counter until ripe. Peel and freeze overripe ones for smoothies.",tags:["staple","local"]},{id:"fr-china",name:"Orange (china)",category:"fruit",emoji:"🍊",color:"orange",servingG:130,kcal:62,cost:.4,co2:.05,water:60,nova:1,local:true,seasonal:["dry"],spoilRisk:"low",storageTip:"Room temp 1 week or refrigerate for 2–3 weeks.",tags:["local"]},{id:"fr-mango",name:"Mango",category:"fruit",emoji:"🥭",color:"orange",servingG:165,kcal:99,cost:.6,co2:.18,water:159,nova:1,local:true,seasonal:["wet"],spoilRisk:"high",storageTip:"Ripen at room temp. Eat within 2 days once soft, or dice and freeze.",tags:["local","seasonal"]},{id:"fr-papaya",name:"Papaya (lechosa)",category:"fruit",emoji:"🍈",color:"orange",servingG:145,kcal:62,cost:.5,co2:.16,water:139,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate when ripe. Use within 2–3 days.",tags:["local"]},{id:"fr-pineapple",name:"Pineapple (piña)",category:"fruit",emoji:"🍍",color:"yellow",servingG:165,kcal:82,cost:.55,co2:.18,water:159,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Whole lasts 3–5 days at room temp. Cut → refrigerate, eat in 3 days.",tags:["local"]},{id:"fr-acerola",name:"Barbados cherry (acerola)",category:"fruit",emoji:"🍒",color:"red",servingG:100,kcal:32,cost:.5,co2:.05,water:96,nova:1,local:true,seasonal:["wet"],spoilRisk:"high",storageTip:"Very perishable — eat same day or freeze immediately.",tags:["local","vitamin-c"]},{id:"fr-guayaba",name:"Guava (guayaba)",category:"fruit",emoji:"🍈",color:"red",servingG:120,kcal:80,cost:.45,co2:.06,water:115,nova:1,local:true,seasonal:["wet"],spoilRisk:"high",storageTip:"Ripen at room temp, refrigerate when soft. Use within 2 days.",tags:["local"]},{id:"fr-coconut",name:"Fresh coconut (coco)",category:"fruit",emoji:"🥥",color:"white",servingG:80,kcal:283,cost:.75,co2:.04,water:194,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Whole coconut keeps 2–3 months. Opened meat → refrigerate, 4 days.",tags:["local"]},{id:"fr-parcha",name:"Passion fruit (parcha)",category:"fruit",emoji:"🟡",color:"yellow",servingG:100,kcal:97,cost:.65,co2:.05,water:96,nova:1,local:true,seasonal:["wet"],spoilRisk:"medium",storageTip:"Wrinkly skin = ripe and sweeter. Scoop pulp and freeze for juice.",tags:["local"]},{id:"fr-apple",name:"Apple (manzana)",category:"fruit",emoji:"🍎",color:"red",servingG:180,kcal:95,cost:.55,co2:.13,water:126,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Refrigerate for longest life — up to 4 weeks.",tags:[]},{id:"fr-grapes",name:"Grapes (uvas)",category:"fruit",emoji:"🍇",color:"purple",servingG:150,kcal:104,cost:.8,co2:.12,water:144,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Refrigerate unwashed. Wash before eating. Use within 1 week.",tags:[]},{id:"fr-strawberry",name:"Strawberries (fresas)",category:"fruit",emoji:"🍓",color:"red",servingG:150,kcal:48,cost:.9,co2:.17,water:144,nova:1,local:false,seasonal:["dry"],spoilRisk:"high",storageTip:"Refrigerate dry, unwashed. Highly perishable — eat within 2–3 days.",tags:["quick-spoil"]},{id:"fr-watermelon",name:"Watermelon (sandía)",category:"fruit",emoji:"🍉",color:"red",servingG:280,kcal:85,cost:.5,co2:.06,water:89,nova:1,local:true,seasonal:["wet"],spoilRisk:"medium",storageTip:"Whole lasts 1 week at room temp. Cut → refrigerate, eat in 3 days.",tags:["local"]},{id:"gr-arroz-blanco",name:"White rice (arroz blanco)",category:"grain",emoji:"🍚",color:null,servingG:160,kcal:205,cost:.2,co2:.64,water:400,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dry rice keeps for years. Cooked rice → refrigerate, eat within 2 days.",tags:["staple","pantry-stable"]},{id:"gr-arroz-integral",name:"Brown rice (arroz integral)",category:"grain",emoji:"🍚",color:null,servingG:160,kcal:215,cost:.25,co2:.64,water:400,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dry keeps months (shorter than white). Cooked → use in 2 days.",tags:["pantry-stable"]},{id:"gr-pan-integral",name:"Whole wheat bread (pan integral)",category:"grain",emoji:"🍞",color:null,servingG:60,kcal:140,cost:.35,co2:.1,water:78,nova:3,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Freeze sliced bread; toast from frozen. PR humidity molds bread fast.",tags:["pantry-stable"]},{id:"gr-pan-sobao",name:"Pan sobao (soft bread)",category:"grain",emoji:"🍞",color:null,servingG:60,kcal:170,cost:.3,co2:.1,water:78,nova:3,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Eat within 2 days or freeze. Molds quickly in PR humidity.",tags:["local","staple"]},{id:"gr-avena",name:"Oatmeal, cooked (avena)",category:"grain",emoji:"🥣",color:null,servingG:175,kcal:155,cost:.25,co2:.12,water:153,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dry oats last months. Cooked → refrigerate, eat within 2 days.",tags:["pantry-stable"]},{id:"gr-pasta",name:"Pasta, cooked",category:"grain",emoji:"🍝",color:null,servingG:160,kcal:220,cost:.3,co2:.19,water:192,nova:3,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dry pasta lasts years. Cooked → refrigerate, use in 3 days.",tags:["pantry-stable"]},{id:"pro-pollo",name:"Chicken, cooked (pollo)",category:"protein",emoji:"🍗",color:null,servingG:115,kcal:187,cost:1.1,co2:.69,water:497,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate cooked within 1 hr. Use within 3 days or freeze.",tags:["staple"]},{id:"pro-cerdo",name:"Pork, cooked (cerdo)",category:"protein",emoji:"🥩",color:null,servingG:115,kcal:210,cost:1.2,co2:.81,water:724,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate promptly. Use within 3 days or freeze.",tags:["staple"]},{id:"pro-res",name:"Beef, cooked (res)",category:"protein",emoji:"🥩",color:null,servingG:115,kcal:250,cost:2,co2:6.9,water:1773,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate immediately. Use within 3 days or freeze.",tags:[]},{id:"pro-bacalao",name:"Salt cod, rehydrated (bacalao)",category:"protein",emoji:"🐟",color:null,servingG:115,kcal:160,cost:1.5,co2:.69,water:345,nova:3,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dried keeps months. Once soaked, refrigerate and use in 2 days.",tags:["staple","pantry-stable"]},{id:"pro-pescado",name:"Fresh fish, cooked (pescado)",category:"protein",emoji:"🐟",color:null,servingG:115,kcal:165,cost:1.6,co2:1.61,water:345,nova:1,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Use within 1–2 days of purchase. Freeze if not cooking today.",tags:["local"]},{id:"pro-habichuelas",name:"Beans, cooked (habichuelas)",category:"protein",emoji:"🫘",color:null,servingG:170,kcal:225,cost:.4,co2:.17,water:172,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Dried beans last years. Cooked → refrigerate 4 days or freeze.",tags:["staple","pantry-stable"]},{id:"pro-gandules",name:"Pigeon peas (gandules)",category:"protein",emoji:"🫘",color:null,servingG:170,kcal:200,cost:.45,co2:.17,water:172,nova:1,local:true,seasonal:["dry"],spoilRisk:"low",storageTip:"Canned last years. Cooked fresh → refrigerate, use in 3 days.",tags:["staple","local","pantry-stable"]},{id:"pro-huevo",name:"Eggs, 2 large (huevos)",category:"protein",emoji:"🥚",color:null,servingG:100,kcal:155,cost:.5,co2:.47,water:256,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Refrigerate always in PR. Keep in carton, not door. 3–5 weeks.",tags:["staple","pantry-stable"]},{id:"pro-tofu",name:"Tofu",category:"protein",emoji:"🧈",color:null,servingG:125,kcal:100,cost:.85,co2:.44,water:268,nova:3,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Once opened, submerge in water, change daily, use within 5 days.",tags:[]},{id:"pro-salchicha",name:"Hot dogs (salchichas)",category:"protein",emoji:"🌭",color:null,servingG:100,kcal:250,cost:1.25,co2:.7,water:500,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Sealed packs last weeks. Opened → use in 5 days.",tags:["ultra-processed"]},{id:"da-leche",name:"Whole milk, 1 cup (leche)",category:"dairy",emoji:"🥛",color:null,servingG:244,kcal:149,cost:.5,co2:.78,water:244,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate always. Use within 7 days of opening. Freeze if needed.",tags:["staple"]},{id:"da-queso-blanco",name:"Fresh white cheese (queso blanco)",category:"dairy",emoji:"🧀",color:null,servingG:30,kcal:80,cost:.55,co2:.63,water:152,nova:3,local:true,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Refrigerate sealed. Use within 5–7 days of opening.",tags:["local"]},{id:"da-yogurt",name:"Yogurt, plain unsweetened, 1 cup",category:"dairy",emoji:"🥛",color:null,servingG:245,kcal:150,cost:.65,co2:.78,water:245,nova:1,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Check date. Keeps 1–2 weeks sealed in fridge.",tags:[]},{id:"ul-soda",name:"Soda, 12 oz (refresco)",category:"ultra",emoji:"🥤",color:null,servingG:355,kcal:140,cost:1.25,co2:.35,water:175,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Shelf-stable. Once opened, drink or discard — goes flat.",tags:["ultra-processed"]},{id:"ul-malta",name:"Malta India",category:"ultra",emoji:"🍺",color:null,servingG:355,kcal:230,cost:1.25,co2:.35,water:200,nova:4,local:true,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Shelf-stable sealed.",tags:["local","ultra-processed"]},{id:"ul-fries",name:"French fries, frozen baked",category:"ultra",emoji:"🍟",color:null,servingG:115,kcal:220,cost:1.00,co2:.55,water:50,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Frozen keeps months. Baked > fried for health.",tags:["ultra-processed"]},{id:"ul-burger",name:"Fast food burger (hamburguesa)",category:"ultra",emoji:"🍔",color:null,servingG:200,kcal:540,cost:5.50,co2:4.5,water:2000,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Eat immediately. Leftover patties → refrigerate, use within 1 day.",tags:["ultra-processed"]},{id:"ul-pizza",name:"Frozen pizza, 2 slices",category:"ultra",emoji:"🍕",color:null,servingG:200,kcal:400,cost:3.00,co2:1.8,water:700,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Frozen keeps months. Refrigerate leftovers, eat within 2 days.",tags:["ultra-processed"]},{id:"ul-donut",name:"Donut (dona)",category:"ultra",emoji:"🍩",color:null,servingG:65,kcal:270,cost:1.75,co2:.4,water:100,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"high",storageTip:"Best same day. Stales quickly.",tags:["ultra-processed"]},{id:"ul-empanadilla",name:"Fried turnover (empanadilla)",category:"ultra",emoji:"🥟",color:null,servingG:115,kcal:280,cost:1.75,co2:.6,water:250,nova:4,local:true,seasonal:["dry","wet"],spoilRisk:"medium",storageTip:"Frozen discos keep for months. Fried → eat same day.",tags:["local","ultra-processed"]},{id:"ul-chips",name:"Chips, 1 oz bag (papitas)",category:"ultra",emoji:"🥔",color:null,servingG:28,kcal:150,cost:1.50,co2:.15,water:25,nova:4,local:false,seasonal:["dry","wet"],spoilRisk:"low",storageTip:"Sealed bags last months. Clip open bags tightly.",tags:["ultra-processed","pantry-stable"]}];
+
+  // ═══════════════════════════════════════════════════════════════
+  //  DATA SOURCES (for About modal)
+  // ═══════════════════════════════════════════════════════════════
+  const DATA_SOURCES = {
+    calories: { name:"USDA FoodData Central", url:"https://fdc.nal.usda.gov/", note:"Calorie values per typical serving. Public domain (CC0 1.0)." },
+    co2: { name:"Poore & Nemecek (2018)", url:"https://www.science.org/doi/10.1126/science.aaq0216", note:"Global median kg CO₂e per kg product, scaled to serving weight. Via Our World in Data." },
+    water: { name:"Mekonnen & Hoekstra (2011), Water Footprint Network", url:"https://www.waterfootprint.org/", note:"Total water footprint (green+blue+grey) L/kg, scaled to serving. Displayed as Water Score (÷100). Includes rainwater." },
+    cost: { name:"Estimated PR retail prices (2024–2025)", url:null, note:"Approximate. Not official pricing data. For game comparison only." },
+    nova: { name:"NOVA food classification (Monteiro et al.)", url:"https://openknowledge.fao.org/handle/20.500.14283/ca5644en", note:"1=unprocessed, 2=processed culinary, 3=processed, 4=ultra-processed. FAO/PAHO source." },
+    waste: { name:"UNEP Food Waste Index Report 2024", url:"https://www.unep.org/resources/publication/food-waste-index-report-2024", note:"Spoil-risk ratings and waste awareness layer. Global food waste estimates by sector." },
+    methane: { name:"UNEP & CCAC Global Methane Assessment (2021)", url:"https://www.unep.org/resources/report/global-methane-assessment-benefits-and-costs-mitigating-methane-emissions", note:"FLW→landfill→methane pathway. Short-lived climate pollutant mitigation." },
+    coldchain: { name:"UNEP & FAO Sustainable Food Cold Chains (2022)", url:"https://doi.org/10.4060/cc0923en", note:"Cold chain gaps, food loss from lack of refrigeration, and associated emissions." }
+  };
+
+  // Starting plate: a few ultra-processed to swap out
+  const STARTING_PLATE = [
+    find("ul-burger"), find("ul-fries"), find("ul-soda"), find("ul-pizza"),
+    find("ul-donut"), null, null, null
+  ];
+
+  function find(id) { return PANTRY.find(f => f.id === id); }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  CHALLENGE PACKS (updated for starch category + water score)
+  // ═══════════════════════════════════════════════════════════════
+  const PACKS = [
+    { key:"budget", name:"Budget Bite", rules:[
+      { key:"prodHalf", label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { key:"budget",   label:"Stay under $4.50",                   test: m => m.cost <= 4.5 },
+      { key:"protein",  label:"Include ≥1 protein",                 test: m => plate.some(x => x && x.category === 'protein') },
+    ]},
+    { key:"eco", name:"Eco Swap", rules:[
+      { key:"prodHalf", label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { key:"co2",      label:"CO₂e ≤ 1.5 kg",                     test: m => m.co2 <= 1.5 },
+      { key:"ultra0",   label:"Remove all ultra-processed",         test: m => m.ultra === 0 },
+    ]},
+    { key:"light", name:"Light & Bright", rules:[
+      { key:"prodHalf", label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { key:"kcal",     label:"≤ 600 kcal total",                   test: m => m.kcal <= 600 },
+      { key:"rainbow",  label:"Rainbow: ≥5 produce colors",         test: m => produceColors().size >= 5 },
+    ]},
+    { key:"balanced", name:"Balanced Basics", rules:[
+      { key:"prodHalf", label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { key:"protein",  label:"Include ≥1 protein",                 test: m => plate.some(x => x && x.category === 'protein') },
+      { key:"starch",   label:"Include ≥1 grain or starch/vianda",         test: m => plate.some(x => x && (x.category === 'grain' || x.category === 'starch')) },
+    ]},
+    { key:"thriftyeco", name:"Thrifty Eco", rules:[
+      { key:"prodHalf", label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { key:"budget",   label:"Stay under $4.00",                   test: m => m.cost <= 4.0 },
+      { key:"co2",      label:"CO₂e ≤ 1.2 kg",                     test: m => m.co2 <= 1.2 },
+    ]},
+  ];
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SPEEDRUN RULES (updated thresholds for water score)
+  // ═══════════════════════════════════════════════════════════════
+  const SPEED_RULES = {
+    "protein-blitz": { name:"Protein Blitz", rules:[
+      { label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { label:"Include ≥1 protein",                  test: m => plate.some(x => x && x.category === 'protein') },
+      { label:"Include ≥1 dairy",                    test: m => plate.some(x => x && x.category === 'dairy') },
+      { label:"Rainbow: ≥4 produce colors",          test: m => produceColors().size >= 4 },
+    ]},
+    "budget": { name:"Budget Sprint", rules:[
+      { label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { label:"Stay under $4.00",                    test: m => m.cost <= 4.0 },
+      { label:"CO₂e ≤ 1.5 kg",                      test: m => m.co2 <= 1.5 },
+      { label:"Rainbow: ≥4 produce colors",          test: m => produceColors().size >= 4 },
+    ]},
+    "purge-ultra": { name:"Ultra Purge", rules:[
+      { label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { label:"0 ultra-processed items",             test: m => m.ultra === 0 },
+      { label:"≤ 600 kcal total",                    test: m => m.kcal <= 600 },
+      { label:"Rainbow: ≥4 produce colors",          test: m => produceColors().size >= 4 },
+    ]},
+    "hydro-light": { name:"Hydro Light", rules:[
+      { label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { label:"Water Score ≤ 12",                    test: m => m.waterScore <= 12 },
+      { label:"≤ 600 kcal total",                    test: m => m.kcal <= 600 },
+      { label:"Rainbow: ≥4 produce colors",          test: m => produceColors().size >= 4 },
+    ]},
+    "eco-saver": { name:"Eco Saver", rules:[
+      { label:"≥ half plate are fruits/vegetables", test: m => m.produce >= PRODUCE_TARGET },
+      { label:"CO₂e ≤ 1.2 kg",                      test: m => m.co2 <= 1.2 },
+      { label:"Stay under $4.00",                    test: m => m.cost <= 4.0 },
+      { label:"Rainbow: ≥4 produce colors",          test: m => produceColors().size >= 4 },
+    ]},
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════════════════════════════
+  let plate = STARTING_PLATE.slice();
+  let filter = "all";
+  let query = "";
+  let seasonalOnly = false;
+  let mode = "sandbox";
+  let goals = null;
+  let timer = 30;
+  let tId = null;
+
+  // ═══════════════════════════════════════════════════════════════
+  //  DOM REFS
+  // ═══════════════════════════════════════════════════════════════
+  const pantryEl = document.getElementById("pantry");
+  const filtersEl = document.getElementById("filters");
+  const searchEl = document.getElementById("search");
+  const plateEl = document.getElementById("plate");
+  const trashEl = document.getElementById("trash");
+  const barfill = document.getElementById("barfill");
+  const vegCountEl = document.getElementById("vegCount");
+  const calEl = document.getElementById("cal");
+  const budgetEl = document.getElementById("budget");
+  const co2El = document.getElementById("co2");
+  const waterEl = document.getElementById("water");
+  const kUltra = document.getElementById("k-ultra");
+  const achEl = document.getElementById("ach");
+  const wasteWidget = document.getElementById("wasteWidget");
+  const wastePips = document.getElementById("wastePips");
+  const goalsEl = document.getElementById("goals");
+  const timerWrap = document.getElementById("speed");
+  const timerEl = document.getElementById("timer");
+  const tabs = document.querySelectorAll(".tab");
+  const statusEl = document.getElementById("status");
+  const seasonBtn = document.getElementById("season");
+  const speedVariantSel = document.getElementById("speedVariant");
+  const challengePackSel = document.getElementById("challengePack");
+  const resetBtn = document.getElementById("reset");
+  const modal = document.getElementById("modal");
+  const modalClose = document.getElementById("modalClose");
+  const modalRetry = document.getElementById("modalRetry");
+  const modalTitle = document.getElementById("mtitle");
+  const modalBody = document.getElementById("mbody");
+  const aboutBtn = document.getElementById("aboutBtn");
+  const authorBtn = document.getElementById("authorBtn");
+
+  // ═══════════════════════════════════════════════════════════════
+  //  FILTER BUTTONS
+  // ═══════════════════════════════════════════════════════════════
+  function makeButton(txt, value) {
+    const b = document.createElement("button");
+    b.textContent = txt; b.className = "pill"; b.dataset.value = value;
+    b.addEventListener("click", () => { filter = value; updateFilterHighlight(); renderPantry(); });
+    return b;
+  }
+  function updateFilterHighlight() {
+    filtersEl.querySelectorAll(".pill").forEach(p => {
+      p.classList.toggle("on", p.dataset.value === filter);
+    });
+  }
+  filtersEl.appendChild(makeButton("All", "all"));
+  Object.keys(CATEGORIES).forEach(k => {
+    filtersEl.appendChild(makeButton(`${CATEGORIES[k].emoji} ${CATEGORIES[k].label}`, k));
+  });
+  updateFilterHighlight(); // highlight "All" on load
+
+  searchEl.addEventListener("input", e => { query = e.target.value.toLowerCase(); renderPantry(); });
+  seasonBtn.addEventListener("click", () => {
+    seasonalOnly = !seasonalOnly;
+    seasonBtn.textContent = seasonalOnly ? "🌴 In-Season Only" : "🌴 All Seasons";
+    seasonBtn.classList.toggle("on", seasonalOnly);
+    renderPantry();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  ABOUT MODAL
+  // ═══════════════════════════════════════════════════════════════
+  aboutBtn.addEventListener("click", () => {
+    modalTitle.textContent = "ℹ️ About the Data";
+    modalRetry.style.display = "none";
+    let html = '<ul class="src-list">';
+    for (const [key, src] of Object.entries(DATA_SOURCES)) {
+      html += `<li><strong>${key.toUpperCase()}:</strong> ${src.name}${src.url ? ` (<a href="${src.url}" target="_blank" rel="noopener">link</a>)` : ''}<br>${src.note}</li>`;
+    }
+    html += '</ul><p style="font-size:12px;color:#9fb0db;margin-top:12px">Each plate slot ≈ 1 typical serving. Water Score = total water footprint (liters) ÷ 100. A score of 1.0 ≈ 100 L, mostly rainwater used to grow crops. Prices are estimates for PR, not official data. This app is for education only.</p>';
+    modalBody.innerHTML = html;
+    modal.classList.add("on");
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  AUTHOR MODAL
+  // ═══════════════════════════════════════════════════════════════
+  authorBtn.addEventListener("click", () => {
+    modalTitle.textContent = "👤 About the Author";
+    modalRetry.style.display = "none";
+    modalBody.innerHTML = `
+      <p style="margin-bottom:12px"><strong>Christian Rivera Calderón</strong><br>
+      Estudios Generales<br>
+      ESGE 4995-043, Universidad de Puerto Rico, 2026</p>
+      <p style="font-size:13px;color:#9fb0db;margin-top:16px"><strong>AI assistance:</strong> This app was developed with the support of <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a> (Anthropic) as the primary creative and coding assistant, and <a href="https://chat.openai.com" target="_blank" rel="noopener">ChatGPT</a> (OpenAI) as a verification and critique tool. All design decisions, content selection, and project direction were made by the author. The AIs served as research, structuring, and development tools — not as authority on any nutritional, medical, or environmental claim.</p>
+      <p style="font-size:12px;color:#9fb0db;margin-top:12px">Source code: <a href="https://github.com/crivera-upr/half-plate-plus" target="_blank" rel="noopener">github.com/crivera-upr/half-plate-plus</a></p>
+    `;
+    modal.classList.add("on");
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  MODAL HELPERS
+  // ═══════════════════════════════════════════════════════════════
+  function showModal(kind) {
+    if (kind === "success") {
+      modalTitle.textContent = "🏆 Speedrun success!";
+      modalBody.innerHTML = "<p>You completed all speedrun goals in time.</p>";
+      modalRetry.style.display = "none";
+    } else {
+      modalTitle.textContent = "Time's up!";
+      modalBody.innerHTML = "<p>Try the speedrun again, or switch variants.</p>";
+      modalRetry.style.display = "inline-block";
+    }
+    modal.classList.add("on");
+  }
+  function hideModal() { modal.classList.remove("on"); }
+  modalClose.addEventListener("click", hideModal);
+  modalRetry.addEventListener("click", () => {
+    hideModal();
+    resetPlate();
+    if (mode === "speedrun") { timer = 30; timerEl.textContent = timer; startTimer(); }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  TAB & SELECT HANDLERS
+  // ═══════════════════════════════════════════════════════════════
+  tabs.forEach(tab => tab.addEventListener("click", () => {
+    const newMode = tab.dataset.mode;
+    if (newMode !== mode) { resetPlate(); }
+    switchMode(newMode);
+  }));
+  speedVariantSel.addEventListener("change", () => {
+    if (mode === "speedrun") { resetPlate(); timer = 30; timerEl.textContent = timer; renderSpeedGoals(); evaluateSpeedGoals(); startTimer(); }
+  });
+  challengePackSel.addEventListener("change", () => {
+    if (mode === "challenge") { resetPlate(); goals = packByKey(challengePackSel.value); renderGoals(); evaluateGoals(); }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  RENDER PANTRY
+  // ═══════════════════════════════════════════════════════════════
+  function renderPantry() {
+    pantryEl.innerHTML = "";
+    const season = currentSeason();
+    PANTRY.filter(i => (filter === "all" || i.category === filter) && i.name.toLowerCase().includes(query))
+      .filter(i => {
+        if (seasonalOnly && (i.category === "vegetable" || i.category === "fruit" || i.category === "starch")) {
+          return (i.seasonal || []).includes(season);
+        }
+        return true;
+      })
+      .forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "item";
+        btn.draggable = true;
+        btn.setAttribute("aria-label", "Add " + item.name);
+        const showDot = isProduce(item) && item.color;
+        const dot = showDot ? `<span class="dot" style="background:${COLOR_HEX[item.color] || '#94a3b8'}"></span>` : "";
+        const catLabel = CATEGORIES[item.category] ? CATEGORIES[item.category].label : item.category;
+        btn.innerHTML = `<div class="em">${item.emoji} ${dot}</div>
+                         <div class="nm">${item.name}</div>
+                         <div class="ct">${catLabel} · ${item.kcal} kcal · $${item.cost.toFixed(2)} · CO₂e ${item.co2.toFixed(2)} kg</div>`;
+        btn.addEventListener("dragstart", ev => {
+          ev.dataTransfer.setData("application/json", JSON.stringify(item));
+          ev.dataTransfer.effectAllowed = "move";
+        });
+        btn.addEventListener("click", () => placeByClick(item));
+        pantryEl.appendChild(btn);
+      });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  PLATE SLOTS
+  // ═══════════════════════════════════════════════════════════════
+  function buildSlots() {
+    plateEl.querySelectorAll(".slot").forEach(n => n.remove());
+    const radius = 135, center = 180;
+    for (let i = 0; i < SLOT_COUNT; i++) {
+      const angle = (i / SLOT_COUNT) * Math.PI * 2 - Math.PI / 2;
+      const x = center + radius * Math.cos(angle);
+      const y = center + radius * Math.sin(angle);
+      const slot = document.createElement("div");
+      slot.className = "slot";
+      slot.style.left = x + "px"; slot.style.top = y + "px";
+      slot.setAttribute("aria-label", "Slot " + (i + 1));
+      slot.addEventListener("dragover", e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; });
+      slot.addEventListener("drop", e => {
+        e.preventDefault();
+        try { const item = JSON.parse(e.dataTransfer.getData("application/json")); onDropItem(i, item); } catch (_) {}
+      });
+      plateEl.appendChild(slot);
+    }
+    ["dragover", "dragenter"].forEach(ev => trashEl.addEventListener(ev, e => { e.preventDefault(); trashEl.style.borderColor = "#ef4444"; }));
+    ["dragleave", "drop"].forEach(ev => trashEl.addEventListener(ev, e => { e.preventDefault(); trashEl.style.borderColor = "#2b3d6a"; }));
+    trashEl.addEventListener("drop", e => {
+      const idx = parseInt(e.dataTransfer.getData("text/slot-index") || "-1", 10);
+      if (idx >= 0) { clearSlot(idx); }
+    });
+  }
+
+  function paintSlots() {
+    const slots = plateEl.querySelectorAll(".slot");
+    slots.forEach((slot, i) => {
+      const item = plate[i];
+      slot.innerHTML = "";
+      slot.classList.remove("fill");
+      slot.style.borderColor = "#1f2a44";
+      if (item) {
+        slot.classList.add("fill");
+        if (item.category === "vegetable") slot.style.borderColor = "#16a34a";
+        else if (item.category === "fruit") slot.style.borderColor = "#22c55e";
+        else if (item.category === "ultra" || item.nova === 4) slot.style.borderColor = "#ef4444";
+        else if (item.category === "protein") slot.style.borderColor = "#f59e0b";
+        else if (item.category === "starch") slot.style.borderColor = "#a78bfa";
+        else if (item.category === "grain") slot.style.borderColor = "#60a5fa";
+        const wrap = document.createElement("div");
+        wrap.style.position = "relative"; wrap.style.textAlign = "center";
+        wrap.className = "tip-trigger";
+        const em = document.createElement("div");
+        const showDot = isProduce(item) && item.color;
+        const dot = showDot ? `<span class="dot" style="background:${COLOR_HEX[item.color] || '#94a3b8'}"></span>` : "";
+        em.style.fontSize = "32px"; em.innerHTML = `${item.emoji} ${dot}`;
+        em.title = item.name;
+        const name = document.createElement("div");
+        name.className = "label"; name.textContent = item.name;
+        const co2 = document.createElement("div");
+        co2.className = "small"; co2.textContent = `CO₂e ${item.co2.toFixed(2)} kg`;
+        // Spoil risk badge
+        if (item.spoilRisk) {
+          const badge = document.createElement("div");
+          badge.className = `spoil-badge ${item.spoilRisk}`;
+          const icons = { high: "⚠️", medium: "⏳", low: "✓" };
+          const labels = { high: "Spoils fast", medium: "Use soon", low: "Keeps well" };
+          badge.textContent = `${icons[item.spoilRisk]} ${labels[item.spoilRisk]}`;
+          wrap.appendChild(badge);
+        }
+        // Storage tip tooltip
+        if (item.storageTip) {
+          const tip = document.createElement("div");
+          tip.className = "tip-bubble";
+          tip.textContent = `💡 ${item.storageTip}`;
+          wrap.appendChild(tip);
+        }
+        const x = document.createElement("button");
+        x.className = "xbtn"; x.innerHTML = "✕"; x.title = "Remove";
+        x.addEventListener("click", () => clearSlot(i));
+        wrap.appendChild(em); wrap.appendChild(name); wrap.appendChild(co2); wrap.appendChild(x);
+        slot.appendChild(wrap);
+        slot.setAttribute("draggable", "true");
+        slot.addEventListener("dragstart", e => { e.dataTransfer.setData("text/slot-index", i.toString()); });
+      } else {
+        const t = document.createElement("div");
+        t.className = "muted"; t.textContent = "Drop here";
+        slot.appendChild(t);
+        slot.setAttribute("draggable", "false");
+      }
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  METRICS & ACHIEVEMENTS
+  // ═══════════════════════════════════════════════════════════════
+  function produceColors() {
+    return new Set(plate.filter(Boolean).filter(x => isProduce(x)).map(x => x.color || '').filter(c => c));
+  }
+
+  function metrics() {
+    const total = plate.filter(Boolean).length;
+    const produce = plate.filter(x => isProduce(x)).length;
+    const ultra = plate.filter(x => isUltra(x)).length;
+    const kcal = sum("kcal");
+    const cost = sum("cost");
+    const co2 = sum("co2");
+    const waterRaw = sum("water");
+    const ws = waterScore(waterRaw);
+    return { total, produce, ultra, kcal, cost, co2, waterRaw, waterScore: ws, meets: produce >= PRODUCE_TARGET };
+  }
+  function sum(key) { return plate.reduce((a, x) => a + (x ? x[key] || 0 : 0), 0); }
+
+  function updateHUD() {
+    const m = metrics();
+    vegCountEl.textContent = `${m.produce} / ${PRODUCE_TARGET}`;
+    const pct = Math.min(100, Math.round((m.produce / PRODUCE_TARGET) * 100));
+    barfill.style.width = pct + "%";
+    calEl.textContent = `${m.kcal} kcal`;
+    budgetEl.textContent = `$${m.cost.toFixed(2)}`;
+    co2El.textContent = `${m.co2.toFixed(2)} kg`;
+    waterEl.textContent = m.waterScore.toFixed(1);
+    kUltra.textContent = m.ultra;
+    updateAchievements();
+    updateWasteWidget();
+    evaluateGoals();
+    evaluateSpeedGoals();
+  }
+
+  function wasteScore() {
+    return plate.filter(Boolean).reduce((s, x) => {
+      if (x.spoilRisk === "high") return s + 2;
+      if (x.spoilRisk === "medium") return s + 1;
+      return s;
+    }, 0);
+  }
+
+  function updateAchievements() {
+    const m = metrics();
+    setAch("rainbow", produceColors().size >= 4);
+    setAch("thrifty", m.cost <= 4.0 && m.total > 0);
+    setAch("lite", m.kcal <= 600 && m.total > 0);
+    setAch("eco", m.co2 <= 1.5 && m.total > 0);
+    setAch("hydr", m.waterScore <= 12 && m.total > 0);
+    setAch("lowwaste", wasteScore() === 0 && m.total > 0);
+  }
+  function setAch(key, on) {
+    const el = achEl.querySelector(`[data-key='${key}']`);
+    if (!el) return;
+    el.classList.toggle("on", !!on);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  WASTE AWARENESS WIDGET
+  // ═══════════════════════════════════════════════════════════════
+  function updateWasteWidget() {
+    const items = plate.filter(Boolean);
+    const high = items.filter(x => x.spoilRisk === "high");
+    const med = items.filter(x => x.spoilRisk === "medium");
+    const low = items.filter(x => x.spoilRisk === "low");
+    const score = wasteScore();
+
+    // Pips
+    let pipHtml = "";
+    if (high.length) pipHtml += `<span class="waste-pip high">⚠️ ${high.length} high</span>`;
+    if (med.length) pipHtml += `<span class="waste-pip medium">⏳ ${med.length} medium</span>`;
+    if (low.length) pipHtml += `<span class="waste-pip low">✓ ${low.length} low</span>`;
+    wastePips.innerHTML = pipHtml || '<span style="font-size:12px;color:#4ade80">No items yet</span>';
+
+    // Color state: green ≤2, yellow 3–4, red 5+
+    wasteWidget.classList.remove("caution", "danger");
+    if (score >= 5) wasteWidget.classList.add("danger");
+    else if (score >= 3) wasteWidget.classList.add("caution");
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  MODE/GOALS LOGIC
+  // ═══════════════════════════════════════════════════════════════
+  function packByKey(k) { return PACKS.find(p => p.key === k) || PACKS[0]; }
+  function populateChallengeSelect() { challengePackSel.innerHTML = PACKS.map(p => `<option value="${p.key}">${p.name}</option>`).join(""); }
+
+  function switchMode(newMode) {
+    mode = newMode;
+    stopTimer(); // always stop timer when switching modes
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
+    goalsEl.style.display = (mode === "challenge" || mode === "speedrun") ? "block" : "none";
+    timerWrap.style.display = (mode === "speedrun") ? "block" : "none";
+    speedVariantSel.style.display = (mode === "speedrun") ? "inline-block" : "none";
+    challengePackSel.style.display = (mode === "challenge") ? "inline-block" : "none";
+    statusEl.textContent = "";
+    if (mode === "challenge") {
+      if (!challengePackSel.options.length) populateChallengeSelect();
+      goals = packByKey(challengePackSel.value || PACKS[0].key);
+      renderGoals();
+    }
+    if (mode === "speedrun") {
+      renderSpeedGoals();
+      timer = 30; timerEl.textContent = timer; startTimer();
+    }
+    evaluateGoals();
+    evaluateSpeedGoals();
+  }
+
+  function renderGoals() {
+    if (mode !== "challenge" || !goals) return;
+    goalsEl.innerHTML = `<div class="muted" style="margin-bottom:6px"><strong>Challenge:</strong> ${goals.name}</div>` +
+      goals.rules.map((r, i) => `<div class="goal" id="goal-${i}"><div class="check">○</div><div>${r.label}</div></div>`).join("");
+  }
+
+  function evaluateGoals() {
+    if (mode !== "challenge" || !goals) return;
+    const m = metrics();
+    goals.rules.forEach((r, i) => {
+      const ok = r.test(m);
+      const el = document.getElementById(`goal-${i}`);
+      if (!el) return;
+      el.classList.toggle("done", ok);
+      el.querySelector(".check").textContent = ok ? "✓" : "○";
+    });
+    const allOk = goals.rules.every(r => r.test(metrics()));
+    if (allOk) statusEl.textContent = "✅ Challenge completed!";
+  }
+
+  function renderSpeedGoals() {
+    if (mode !== "speedrun") return;
+    const spec = SPEED_RULES[speedVariantSel.value];
+    goalsEl.innerHTML = `<div class="muted" style="margin-bottom:6px"><strong>Speedrun:</strong> ${spec.name}</div>` +
+      spec.rules.map((r, i) => `<div class="goal" id="sgoal-${i}"><div class="check">○</div><div>${r.label}</div></div>`).join("");
+  }
+
+  function evaluateSpeedGoals() {
+    if (mode !== "speedrun") return;
+    const spec = SPEED_RULES[speedVariantSel.value];
+    const m = metrics();
+    spec.rules.forEach((r, i) => {
+      const ok = r.test(m);
+      const el = document.getElementById(`sgoal-${i}`);
+      if (!el) return;
+      el.classList.toggle("done", ok);
+      el.querySelector(".check").textContent = ok ? "✓" : "○";
+    });
+    const allOk = spec.rules.every(r => r.test(m));
+    if (allOk && tId) {
+      stopTimer();
+      statusEl.textContent = "🏆 Speedrun success!";
+      showModal("success");
+    }
+  }
+  function speedrunComplete() {
+    if (mode !== "speedrun") return false;
+    const spec = SPEED_RULES[speedVariantSel.value];
+    const m = metrics();
+    return spec.rules.every(r => r.test(m));
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  TIMER
+  // ═══════════════════════════════════════════════════════════════
+  function startTimer() {
+    stopTimer();
+    tId = setInterval(() => {
+      timer--; timerEl.textContent = timer;
+      evaluateSpeedGoals();
+      if (timer <= 0) {
+        stopTimer();
+        if (speedrunComplete()) { statusEl.textContent = "🏆 Speedrun success!"; showModal("success"); }
+        else { statusEl.textContent = "⏱️ Time up! Try again."; showModal("fail"); }
+      }
+    }, 1000);
+  }
+  function stopTimer() { if (tId) { clearInterval(tId); tId = null; } }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  INTERACTIONS
+  // ═══════════════════════════════════════════════════════════════
+  function onDropItem(slotIndex, item) { plate[slotIndex] = item; paintSlots(); updateHUD(); }
+  function placeByClick(item) {
+    let idx = plate.findIndex(x => x === null);
+    if (idx === -1) {
+      flash("Plate full — remove an item first!");
+      return;
+    }
+    plate[idx] = item; paintSlots(); updateHUD();
+  }
+  function clearSlot(i) { plate[i] = null; paintSlots(); updateHUD(); }
+  function resetPlate() { plate = STARTING_PLATE.slice(); paintSlots(); updateHUD(); statusEl.textContent = ""; }
+
+  resetBtn.addEventListener("click", resetPlate);
+
+  // ═══════════════════════════════════════════════════════════════
+  //  HELPERS
+  // ═══════════════════════════════════════════════════════════════
+  function currentSeason() {
+    const m = (new Date()).getMonth() + 1;
+    // PR tropical: dry = Dec–Apr, wet = May–Nov
+    if ([5,6,7,8,9,10,11].includes(m)) return "wet";
+    return "dry";
+  }
+  function pickProduce() {
+    const season = currentSeason();
+    const list = PANTRY.filter(f => isProduce(f) && (!seasonalOnly || (f.seasonal || []).includes(season)));
+    return list[Math.floor(Math.random() * list.length)];
+  }
+  function flash(msg) {
+    statusEl.textContent = msg;
+    setTimeout(() => { if (statusEl.textContent === msg) statusEl.textContent = ""; }, 1800);
+  }
+  function sparkle() {
+    const m = metrics();
+    if (!m.meets) return;
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement("div");
+      s.textContent = i % 2 ? "✨" : "🥦";
+      s.style.position = "fixed";
+      s.style.left = (Math.random() * 100) + "vw";
+      s.style.top = (Math.random() * 30) + "vh";
+      s.style.fontSize = (16 + Math.random() * 24) + "px";
+      s.style.pointerEvents = "none";
+      s.style.transition = "all 1200ms ease-out";
+      document.body.appendChild(s);
+      requestAnimationFrame(() => {
+        s.style.transform = "translateY(-40px)";
+        s.style.opacity = "0";
+      });
+      setTimeout(() => s.remove(), 1300);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  INIT
+  // ═══════════════════════════════════════════════════════════════
+  renderPantry();
+  buildSlots();
+  paintSlots();
+  updateHUD();
+  switchMode("sandbox");
+})();
+</script>
+</body>
+</html>
