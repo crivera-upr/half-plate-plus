@@ -2,7 +2,11 @@
 
 Juego educativo interactivo sobre alimentación balanceada, impacto ambiental y desperdicio de alimentos — centrado en el paisaje alimentario de Puerto Rico. Desarrollado en el marco del curso ESGE 4995-043 de la Universidad de Puerto Rico (2026).
 
-**Demo:** [Ver Half-Plate PLUS →](https://YOUR_USERNAME.github.io/half-plate-plus/)
+**Autor:** Christian Rivera Calderón  
+**Programa:** Estudios Generales  
+**Curso:** ESGE 4995-043, Universidad de Puerto Rico, 2026
+
+**Demo:** [Ver Half-Plate PLUS →](https://crivera-upr.github.io/half-plate-plus/)
 
 ---
 
@@ -120,13 +124,13 @@ Descarga o clona el repositorio y abre `index.html` en cualquier navegador moder
 
 ### Opción 2: GitHub Pages
 
-Visita la demo en vivo: `https://crivera-upr.github.io/half-plate-plus/index.html`
+Visita la demo en vivo: `https://crivera-upr.github.io/half-plate-plus/`
 
 ---
 
 ## Licencia
 
-Proyecto académico — ESGE 4995-043, Universidad de Puerto Rico, 2026.
+Proyecto académico — Christian Rivera Calderón, Estudios Generales, ESGE 4995-043, Universidad de Puerto Rico, 2026.
 
 ---
 
