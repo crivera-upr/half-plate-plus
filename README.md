@@ -37,7 +37,7 @@ El proyecto integra el tema central del semestre: **pérdida y desperdicio de al
 
 ---
 
-## Estado del proyecto — Versión 6.1
+## Estado del proyecto — Versión 6.2
 
 | Prioridad | Descripción | Estado |
 |-----------|-------------|--------|
@@ -108,7 +108,7 @@ Todas las decisiones de diseño, selección de contenido y dirección del proyec
 ```
 half-plate-plus/
 ├── index.html                           # Aplicación web completa (standalone)
-├── half-plate-plus-guide-v6_1.html      # Guía interactiva "How to Play" (7 diapositivas)
+├── half-plate-plus-guide-v6_2.html      # Guía interactiva "How to Play" (7 diapositivas)
 └── README.md                            # Este archivo
 ```
 
